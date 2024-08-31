@@ -1,10 +1,13 @@
-package cleancode.minesweeper.tobe;
+package cleancode.minesweeper.version;
+
+import cleancode.minesweeper.tobe.AppException;
+import cleancode.minesweeper.tobe.Cell;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public class MinesweeperGame {
+public class MinesweeperGameV2 {
 
     public static final int BOARD_ROW_SIZE = 8;
     public static final int BOARD_COL_SIZE = 10;
@@ -39,6 +42,7 @@ public class MinesweeperGame {
                 System.out.println(e.getMessage());
             } catch (Exception e) { // 예상하지 못한 문제에 대한 예외 메시지남김
                 System.out.println("프로그램에 문제가 생겼습니다.");
+                // e.printStackTrace(); // 안티패턴이니 로그로 남기셈
             }
         }
     }
@@ -64,6 +68,7 @@ public class MinesweeperGame {
             checkIfGameIsOver();
             return;
         }
+//        System.out.println("잘못된 번호를 선택하셨습니다.");
         throw new AppException("잘못된 번호를 선택하셨습니다.");
     }
 
@@ -111,6 +116,15 @@ public class MinesweeperGame {
         return gameStatus == 1;
     }
 
+    // 아래의 isAllOpened는 사실 메서드 전체의 이름과 동일한 일을 함.
+    // 그리고 메서드는 gameSatus를 1로 바꾼다는 의미를 제대로 전달하지 못하고 있음.
+//    private static void checkIfAllCellIsOpened() {
+//        boolean isAllOpened = isAllOpened();
+//        if (isAllOpened) {
+//            gameStatus = 1;
+//        }
+//    }
+
     private static void checkIfGameIsOver() {
         boolean isAllOpened = isAllCellChecked();
         if (isAllOpened) {
@@ -118,7 +132,37 @@ public class MinesweeperGame {
         }
     }
 
+    // 그냥 기존에 많은 곳에 사용되고 있는 메서드를 리팩토링을 위해 수정해버리면
+    // 해당 메서드를 쓰는 모든 곳에 영향을 준다. 이걸 확인하려면 메서드를 하나 더 잠깐 만들었다가
+    // 모든 곳을 수정한 뒤 IDE의 도움을 받아 회색처리가 되면 지워라.
+//    private static boolean isAllCellOpened() {
+//        boolean isAllOpened = true;
+//        for (int row = 0; row < BOARD_ROW_SIZE; row++) {
+//            for (int col = 0; col < BOARD_COL_SIZE; col++) {
+//                if (BOARD[row][col].equals(CLOSED_CELL_SIGN)) {
+//                    isAllOpened = false;
+//                }
+//            }
+//        }
+//        return isAllOpened;
+//    }
+
+    // 해당 메서드는 모든 셀에 대해서 돌아보는 것이다.
+    // 그렇기 때문에 for문의 의미와 동일하게 모든 요소에 대해서 살펴본다는 의미로
+    // 아래의 스트림의 작성이 가능한 것.
+    // 주의할 건, 스트림이 무조건적으로 가독성이 높진 않다. 상황에 따라서 고민을 할 필요가 있음.
+//    private static boolean isAllCellOpened() {
+//        // cell은 null일 가능성이 높음.
+//        // cell이 본인이 sign이 같은지 아닌지 알려주는 게 필요함. 데이터를 가져와서 물어보는 건 좋지 못한 설계임.
+//        return Arrays.stream(BOARD)
+//                .flatMap(Arrays::stream)
+//                .noneMatch(Cell::isClosed);
+//    }
+
+    // 이제 객체로 변경된 시점부터 Cell자체가 열려있다 닫혀있다가 아니라 check가 되어있냐 안되어있냐로 구분이 됨.
     private static boolean isAllCellChecked() {
+        // cell은 null일 가능성이 높음.
+        // cell이 본인이 sign이 같은지 아닌지 알려주는 게 필요함. 데이터를 가져와서 물어보는 건 좋지 못한 설계임.
         return Arrays.stream(BOARD)
                 .flatMap(Arrays::stream)
                 .allMatch(Cell::isChecked);
@@ -165,6 +209,7 @@ public class MinesweeperGame {
         for (int row = 0; row < BOARD_ROW_SIZE; row++) {
             System.out.printf("%d  ", row + 1);
             for (int col = 0; col < BOARD_COL_SIZE; col++) {
+                // 그리는 쪽은 Cell이 아닌 Board쪽임. 그러니 이건 여기서 가져와서 그려야됨.
                 System.out.print(BOARD[row][col].getSign() + " ");
             }
             System.out.println();
