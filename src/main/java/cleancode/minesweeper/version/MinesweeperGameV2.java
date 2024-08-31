@@ -1,6 +1,6 @@
 package cleancode.minesweeper.version;
 
-import cleancode.minesweeper.tobe.AppException;
+import cleancode.minesweeper.tobe.GameException;
 import cleancode.minesweeper.tobe.Cell;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class MinesweeperGameV2 {
                 String cellInput = getCellInputFromUser();
                 String userActionInput = getUserActionInputFromUser();
                 actOnCell(cellInput, userActionInput);
-            } catch (AppException e) { // 예상하고 있는 범위에 대한 예외 처리
+            } catch (GameException e) { // 예상하고 있는 범위에 대한 예외 처리
                 System.out.println(e.getMessage());
             } catch (Exception e) { // 예상하지 못한 문제에 대한 예외 메시지남김
                 System.out.println("프로그램에 문제가 생겼습니다.");
@@ -69,7 +69,7 @@ public class MinesweeperGameV2 {
             return;
         }
 //        System.out.println("잘못된 번호를 선택하셨습니다.");
-        throw new AppException("잘못된 번호를 선택하셨습니다.");
+        throw new GameException("잘못된 번호를 선택하셨습니다.");
     }
 
     private static void changeGameStatusToLose() {
@@ -172,7 +172,7 @@ public class MinesweeperGameV2 {
     private static int convertRowFrom(char cellInputRow) {
         int rowIndex = Character.getNumericValue(cellInputRow) - 1;
         if (rowIndex >= BOARD_ROW_SIZE)
-            throw new AppException("잘못된 입력입니다.");
+            throw new GameException("잘못된 입력입니다.");
 
         return rowIndex;
     }
@@ -200,7 +200,7 @@ public class MinesweeperGameV2 {
             case 'j':
                 return 9;
             default:
-                throw new AppException("잘못된 입력입니다.");
+                throw new GameException("잘못된 입력입니다.");
         }
     }
 
