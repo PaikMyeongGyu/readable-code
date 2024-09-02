@@ -1,6 +1,5 @@
 package cleancode.minesweeper.tobe;
 
-import cleancode.minesweeper.tobe.gamelevel.Beginner;
 import cleancode.minesweeper.tobe.gamelevel.GameLevel;
 import cleancode.minesweeper.tobe.gamelevel.Middle;
 import cleancode.minesweeper.tobe.io.ConsoleInputHandler;
